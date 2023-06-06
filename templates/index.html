@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suffolk Back Yard Ultra 2023 Live Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css" rel="stylesheet"/>    
+</head>
+<body>
+    <h1 class="text-2xl font-bold m-10">Suffolk Back Yard Ultra 2023 Live Results</h1>
+    <div id="results-container" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-10"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function updateResults() {
+            $.ajax({
+                url: '/results',
+                dataType: 'json',
+                success: function(data) {
+                    const athletes = data.athletes;
+                    const resultsContainer = $('#results-container');
+                    resultsContainer.empty();
+
+                    athletes.forEach(athlete => {
+                        // Create a card element for each athlete
+                        const card = $('<div>').addClass('bg-white rounded p-4 shadow');
+                        // Create the card content
+                        // const flagImage = $('<span>').addClass('fi fi-' + athlete.countryCode);
+                        const name = $('<div>').append(
+                            $('<span>').addClass('w-auto inline-block fi fi-' + athlete.countryCode),
+                            $('<span>').addClass('ml-2 text-lg font-bold mb-2').text(athlete.name)
+                        );
+                        const lastLapTime = $('<p>').text('Last Lap Time: ' + athlete.lastLapTime);
+                        const numberOfLaps = $('<p>').text('Number of Laps: ' + athlete.numberOfLaps);
+                        const totalTime = $('<p>').text('Total time on course: ' + athlete.totalTime);
+                        const lineGraph = $('<div>').addClass('line-graph');
+                        const status = $('<p>').text('' + athlete.status);
+
+                        // Append the elements to the card
+                        // card.append(flagImage, name, lastLapTime, numberOfLaps, totalTime, lineGraph);
+                        card.append(name, lastLapTime, numberOfLaps, totalTime, lineGraph);
+
+                        if (athlete.status != '') {
+                            card.removeClass('bg-white').addClass('bg-gray-100');
+                            card.append(status);
+                        }
+
+                        // Append the card to the results container
+                        resultsContainer.append(card);
+                    });
+                }
+            });
+        }
+
+        updateResults();
+        setInterval(updateResults, 1000000);  // Refresh every 10 seconds
+    </script>
+</body>
+</html>

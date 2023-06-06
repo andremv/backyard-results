@@ -1,0 +1,8 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - 8123:8123
+    volumes:
+      - .:/app

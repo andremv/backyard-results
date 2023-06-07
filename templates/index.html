@@ -6,13 +6,23 @@
     <title>Suffolk Back Yard Ultra 2023 Live Results</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css" rel="stylesheet"/>    
+
+    <style>
+        .clock {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            color: red;
+            background-color: #000;
+            padding: 0.25rem 1.5rem;
+            border-radius: 0.25rem;
+        }
+    </style>
 </head>
-<body>
-    <h1 class="text-2xl font-bold m-10">Suffolk Back Yard Ultra 2023 Live Results</h1>
-    <div id="results-container" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-10"></div>
-
+<body>   
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         function updateResults() {
             $.ajax({
@@ -50,12 +60,50 @@
                         // Append the card to the results container
                         resultsContainer.append(card);
                     });
+                    const now = new Date();
+                    const lastUpdate = $('#last-update');
+                    lastUpdate.empty().append( $('<p>').text('Last update: ' + now.toLocaleString()) );
                 }
             });
         }
 
         updateResults();
-        setInterval(updateResults, 1000000);  // Refresh every 10 seconds
+        setInterval(updateResults, 10000);  // Refresh every 10 seconds
+
+        // Calculate the time difference from Saturday at noon to the current time
+        function calculateTimeDifference() {
+            const now = new Date();
+            const saturdayNoon = Date.parse('03 Jun 2023 11:00:00 GMT')
+            const diff = now - saturdayNoon;
+            return diff;
+        }
+
+        // Update the clock element with the time difference
+        function updateClock() {
+            const clockElement = document.getElementById('clock');
+            const timeDifference = calculateTimeDifference();
+
+            // Calculate hours, minutes, and seconds
+            const hours = Math.floor(timeDifference / 3600000);
+            const minutes = Math.floor((timeDifference % 3600000) / 60000);
+            const seconds = Math.floor((timeDifference % 60000) / 1000);
+
+            // Format the time with leading zeros if necessary
+            const formattedTime = `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+
+            // Calculate miles
+            miles = Math.round(4.167 * hours)
+            kms = Math.round(6.7061364 * hours)
+
+            clockElement.textContent = formattedTime + ' ' + kms + 'km';
+        }
+
+        // Update the clock every second
+        // setInterval(updateClock, 1000);
     </script>
+    <h1 class="text-2xl font-bold m-5">Suffolk Back Yard Ultra 2023 Live Results</h1>
+    <div id="last-update" class="m-5 text-sm"></div>
+    <div id="results-container" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-5"></div>
+    <!-- <div id="clock" class="clock"></div> -->
 </body>
 </html>

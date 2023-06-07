@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port on which the web app will run
-EXPOSE 8000
+EXPOSE 8069
 
 # Start the web app
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8069", "wsgi:app"]
